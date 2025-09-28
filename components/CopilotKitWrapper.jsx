@@ -166,7 +166,7 @@ function AppWithSuggestions({ children }) {
           title: "Dspread Assistant",
           initial: "How can I help you with Dspread documentation today?",
         }}
-        defaultOpen={false}
+        defaultOpen={true}
         clickOutsideToClose={false}
         className="copilot-sidebar"
       />
@@ -180,7 +180,7 @@ export default function CopilotKitWrapper({ children }) {
   return (
     <CopilotKit 
       publicApiKey="ck_pub_79b8a4d1d6892f3997f82b857495ed8b"
-      showDevConsole={true}
+      showDevConsole={false}
     >
       <AppWithSuggestions>
         {children}

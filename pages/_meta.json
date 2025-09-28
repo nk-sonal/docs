@@ -28,12 +28,12 @@
   },
   "faq": {
     "title": "💡Q&A",
-    "href": "https://github.com/orgs/DspreadOrg/discussions/categories/q-a",
+    "href": "https://github.com/orgs/DspreadOrg/discussions",
     "newWindow": true
   },
   "troubleshooting": {
     "title": "🙌Show and tell",
-    "href": "https://github.com/orgs/DspreadOrg/discussions/categories/show-and-tell",
+    "href": "https://github.com/orgs/DspreadOrg/discussions/categories/instruction-video",
     "newWindow": true
   }
 }
