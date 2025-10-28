@@ -14,30 +14,36 @@ import { Steps, Tabs, Tab } from 'nextra/components'
 <Tabs items={['smartpos', 'mpos']}>
   <Tab>
   ```java
-  private void open(CommunicationMode mode) {
-      listener = new MyPosListener();
-      pos = QPOSService.getInstance(OtherActivity.this, mode);
-      if (pos == null) {
-          statusEditText.setText("CommunicationMode unknow");
-          return;
-      }
-      Handler handler = new Handler(Looper.myLooper());
-      pos.initListener(handler, listener);
-  }
+    ...
+    // register connection callback
+    registerConnectionCallback(callback);
+    ...
+    // init connection for smartpos
+    posType = POS_TYPE.UART;
+    initMode(QPOSService.CommunicationMode.UART);
+    pos.openUart();
+    ...
   ```
   </Tab>
   <Tab>
   ```java
-  private void open(CommunicationMode mode) {
-      listener = new MyPosListener();
-      pos = QPOSService.getInstance(OtherActivity.this, mode);
-      if (pos == null) {
-          statusEditText.setText("CommunicationMode unknow");
-          return;
-      }
-      Handler handler = new Handler(Looper.myLooper());
-      pos.initListener(handler, listener);
-  }
+    ...
+    // register connection callback
+    registerConnectionCallback(callback);
+    ...
+    // init connection for mpos reader
+    if(deviceAddress.contains(":")){
+        posType = POS_TYPE.BLUETOOTH;
+        initMode(QPOSService.CommunicationMode.BLUETOOTH);
+        pos.setDeviceAddress("AA:BB:CC:DD:EE:FF");
+        pos.connectBluetoothDevice(true, 25, deviceAddress);
+    }else {
+        posType = POS_TYPE.USB;
+        UsbDevice usbDevice = USBClass.getMdevices().get(deviceAddress);
+        initMode(QPOSService.CommunicationMode.USB_OTG_CDC_ACM);
+        pos.openUsb(usbDevice);
+    }
+    ...
   ```
   </Tab>
 </Tabs>
@@ -141,21 +147,68 @@ public void onRequestSelectEmvApp(ArrayList<String> appList) {
 <Tabs items={['smartpos', 'mpos', 'CR100']}>
   <Tab>
   ```java
-  @Override
-  public void onQposRequestPinResult(List<String> dataList, int offlinePinTimes) {
-      // draw the pin input keyboard, after finish the keyboard, then call the below api
-      pos.pinMapSync(value, 30); // the value is the keyboard pin coordinate position
-  }
+
+  public void onQposRequestPinResult(List<String> dataList, int offlineTime) {
+      
+        MyKeyboardView.setKeyBoardListener(value -> {
+            if (pos.isDeviceReady()) {
+                pos.pinMapSync(value, 20);
+            }
+        });
+       
+        keyboardUtil = new KeyboardUtil(PaymentActivity.this, binding.scvText, dataList);
+        keyboardUtil.initKeyboard(MyKeyboardView.KEYBOARDTYPE_Only_Num_Pwd, binding.pinpadEditText);//Random keyboard
+        
+    }
   ```
   </Tab>
   <Tab>
   ```java
   // mPOS PIN entry implementation
+
+   public void onRequestDisplay(QPOSService.Display displayMsg) {
+        TRACE.d("onRequestDisplay(Display displayMsg):" + displayMsg.toString());
+        String msg = "";
+        if (displayMsg == QPOSService.Display.INPUT_PIN) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PaymentActivity.this);
+            builder.setMessage("Inputting pin");
+            builder.show();
+        }
   ```
   </Tab>
   <Tab>
   ```java
   // CR100 PIN entry implementation
+
+        @Override
+    public void onRequestSetPin() {
+        TRACE.i("onRequestSetPin()");
+        viewModel.clearErrorState();
+        viewModel.titleText.set(getString(R.string.input_pin));
+        pinPadDialog = new PinPadDialog(PaymentActivity.this);
+        pinPadDialog.getPayViewPass().setRandomNumber(true).setPayClickListener(pos.getQPOSService(), new PinPadView.OnPayClickListener() {
+
+            @Override
+            public void onConfirm(String password) {
+                String pinBlock = QPOSUtil.buildCvmPinBlock(pos.getEncryptData(), password);// build the ISO format4 pin block
+                pos.sendCvmPin(pinBlock, true);
+                pinPadDialog.dismiss();
+            }
+
+            
+            @Override
+            public void onCencel() {
+                pos.cancelPin();
+                pinPadDialog.dismiss();
+            }
+
+            @Override
+            public void onPaypass() {
+                pos.bypassPin();
+                pinPadDialog.dismiss();
+            }
+        });
+    }
   ```
   </Tab>
 </Tabs>
