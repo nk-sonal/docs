@@ -1,18 +1,18 @@
-# Dspread Documentation
+# Neokred Documentation
 
 [![Deploy to GitHub Pages](https://github.com/DspreadOrg/docs/actions/workflows/deploy.yml/badge.svg)](https://github.com/DspreadOrg/docs/actions/workflows/deploy.yml)
 
 ## Live Documentation
 
 The documentation is automatically deployed to GitHub Pages and is available at:
-[https://dspreadorg.github.io/docs](https://dspreadorg.github.io/docs)
+[https://nk-sonal.github.io/docs/](https://nk-sonal.github.io/docs/)
 
 ## Setting Up Documentation Locally
 
 ### 1. Clone the repository:
 
 ```bash
-git clone https://github.com/DspreadOrg/docs.git
+git clone https://github.com/nk-sonal/docs
 ```
 
 ### 2. Navigate to the docs folder:
@@ -58,7 +58,7 @@ This repository is configured to automatically deploy to GitHub Pages when chang
 
 If you need to manually trigger a deployment:
 
-1. Go to the [Actions tab](https://github.com/DspreadOrg/docs/actions) in the GitHub repository
+1. Go to the [Actions tab](https://github.com/nk-sonal/docs/actions) in the GitHub repository
 2. Select the "Deploy to GitHub Pages" workflow
 3. Click "Run workflow" and select the branch you want to deploy
 
